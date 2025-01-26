@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.rafiq.rest.webservices.restfulwebservices.dto.UserLocationDTO;
 import com.rafiq.rest.webservices.restfulwebservices.services.UserService;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 
 @RestController
