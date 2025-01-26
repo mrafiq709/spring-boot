@@ -8,6 +8,7 @@ import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.util.UUID;
 
+import com.rafiq.rest.webservices.restfulwebservices.services.UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -16,15 +17,12 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.User.UserBuilder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
 import com.nimbusds.jose.JOSEException;
@@ -66,25 +64,25 @@ public class SpringSecurityConfiguration {
 	
     @Bean
     public AuthenticationManager authenticationManager(
-            UserDetailsService userDetailsService) {
+            UserService userDetailsService) {
         var authenticationProvider = new DaoAuthenticationProvider();
         authenticationProvider.setUserDetailsService(userDetailsService);
         return new ProviderManager(authenticationProvider);
     }
 
-    @Bean
-    public UserDetailsService userDetailsService() {
-    	
-    	UserBuilder users = User.withDefaultPasswordEncoder();
-    	
-    	UserDetails admin = users
-    		.username("rafiq")
-    		.password("Rafiq@123")
-    		.roles("USER", "ADMIN")
-    		.build();
-
-        return new InMemoryUserDetailsManager(admin);
-    }
+//    @Bean
+//    public UserDetailsService userDetailsService() {
+//
+//    	UserBuilder users = User.withDefaultPasswordEncoder();
+//
+//    	UserDetails admin = users
+//    		.username("rafiq")
+//    		.password("Rafiq@123")
+//    		.roles("USER", "ADMIN")
+//    		.build();
+//
+//        return new InMemoryUserDetailsManager(admin);
+//    }
 	
     @Bean
     public JWKSource<SecurityContext> jwkSource() {
@@ -127,6 +125,12 @@ public class SpringSecurityConfiguration {
     @Bean
     JwtEncoder jwtEncoder(JWKSource<SecurityContext> jwkSource) {
         return new NimbusJwtEncoder(jwkSource);
+    }
+
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 
 }
