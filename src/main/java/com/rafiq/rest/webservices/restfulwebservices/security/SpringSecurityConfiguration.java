@@ -55,9 +55,7 @@ public class SpringSecurityConfiguration {
 //		3) CSRF -> POST, PUT
 	         http.csrf(csrf -> csrf.disable());
 //	       OR
-	    http.oauth2ResourceServer(
-	    		OAuth2ResourceServerConfigurer::jwt
-	    );
+	    http.oauth2ResourceServer(oauth2->oauth2.jwt(withDefaults()));
 
 		return http.build();
 	}

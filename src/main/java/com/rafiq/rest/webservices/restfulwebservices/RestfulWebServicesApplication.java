@@ -31,26 +31,26 @@ public class RestfulWebServicesApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		Location location = new Location();
-		location.setPlace("Japan");
-		location.setDescription("Awesome");
-		location.setLongitude(40.5);
-		location.setLatitude(38.9);
-
-		locationRepository.save(location);
-
-		Role role = roleRepository.findByRoleName("USER");
-		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-
-		UserEntity userEntity = new UserEntity();
-		userEntity.setFirstName("Md Rafiqul");
-		userEntity.setLastName("Islam");
-		userEntity.setEmail("mrafiq709@gmail.com");
-		userEntity.setUsername("mrafiq709");
-		userEntity.setPassword(passwordEncoder.encode("secret"));
-		userEntity.setRole(role);
-		userEntity.setLocation(location);
-		userRepository.save(userEntity);
+//		Location location = new Location();
+//		location.setPlace("Japan");
+//		location.setDescription("Awesome");
+//		location.setLongitude(40.5);
+//		location.setLatitude(38.9);
+//
+//		locationRepository.save(location);
+//
+//		Role role = roleRepository.findByRoleName("USER");
+//		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+//
+//		UserEntity userEntity = new UserEntity();
+//		userEntity.setFirstName("Md Rafiqul");
+//		userEntity.setLastName("Islam");
+//		userEntity.setEmail("mrafiq709@gmail.com");
+//		userEntity.setUsername("mrafiq709");
+//		userEntity.setPassword(passwordEncoder.encode("secret"));
+//		userEntity.setRole(role);
+//		userEntity.setLocation(location);
+//		userRepository.save(userEntity);
 	}
 
 }
