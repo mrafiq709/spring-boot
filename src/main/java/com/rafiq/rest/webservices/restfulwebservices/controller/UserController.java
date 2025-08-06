@@ -2,6 +2,8 @@ package com.rafiq.rest.webservices.restfulwebservices.controller;
 
 import java.util.List;
 
+import com.rafiq.rest.webservices.restfulwebservices.dto.UserDTO;
+import com.rafiq.rest.webservices.restfulwebservices.model.UserEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -18,5 +20,10 @@ public class UserController {
     @GetMapping("/users-location")
     public List<UserLocationDTO> getAlLUsersLocation() {
         return userService.getAllUsersLocation();
+    }
+
+    @GetMapping("/users")
+    public List<UserDTO> getAllUsers() {
+        return userService.getAllUsers();
     }
 }

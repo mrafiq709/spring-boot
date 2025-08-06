@@ -1,4 +1,5 @@
 package com.rafiq.rest.webservices.restfulwebservices.services;
+import com.rafiq.rest.webservices.restfulwebservices.dto.UserDTO;
 import com.rafiq.rest.webservices.restfulwebservices.repository.UserRepository;
 import com.rafiq.rest.webservices.restfulwebservices.dto.UserLocationDTO;
 import com.rafiq.rest.webservices.restfulwebservices.model.UserEntity;
@@ -49,6 +50,23 @@ public class UserService implements UserDetailsService {
         userLocationDTO.setLongitude(user.getLocation().getLongitude());
         userLocationDTO.setLatitude(user.getLocation().getLatitude());
         return userLocationDTO;
+    }
+
+    public List<UserDTO> getAllUsers() {
+        return userRepository.findAll().stream().map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    private UserDTO convertToDTO(UserEntity user) {
+        UserDTO userDTO = new UserDTO();
+        userDTO.setId(user.getId());
+        userDTO.setUsername(user.getUsername());
+        userDTO.setEmail(user.getEmail());
+        userDTO.setFirstName(user.getFirstName());
+        userDTO.setLastName(user.getLastName());
+        userDTO.setRole(user.getRole());
+        userDTO.setLocation(user.getLocation());
+        return userDTO;
     }
 }
 
