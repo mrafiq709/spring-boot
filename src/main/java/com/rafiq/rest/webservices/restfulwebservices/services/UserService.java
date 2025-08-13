@@ -1,5 +1,9 @@
 package com.rafiq.rest.webservices.restfulwebservices.services;
 import com.rafiq.rest.webservices.restfulwebservices.dto.UserDTO;
+import com.rafiq.rest.webservices.restfulwebservices.model.Location;
+import com.rafiq.rest.webservices.restfulwebservices.model.Role;
+import com.rafiq.rest.webservices.restfulwebservices.repository.LocationRepository;
+import com.rafiq.rest.webservices.restfulwebservices.repository.RoleRepository;
 import com.rafiq.rest.webservices.restfulwebservices.repository.UserRepository;
 import com.rafiq.rest.webservices.restfulwebservices.dto.UserLocationDTO;
 import com.rafiq.rest.webservices.restfulwebservices.model.UserEntity;
@@ -12,6 +16,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -19,6 +24,10 @@ public class UserService implements UserDetailsService {
 
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private LocationRepository locationRepository;
+    @Autowired
+    private RoleRepository roleRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -67,6 +76,26 @@ public class UserService implements UserDetailsService {
         userDTO.setRole(user.getRole());
         userDTO.setLocation(user.getLocation());
         return userDTO;
+    }
+
+    public UserEntity createUser(String firstName, String lastName, String email, String username, String password, String role, String location) {
+        Location location2 = new Location();
+        location2.setPlace(location);
+        location2.setDescription("Awesome");
+        location2.setLongitude(40.5);
+        location2.setLatitude(38.9);
+        locationRepository.save(location2);
+        Role role2 = roleRepository.findByRoleName(role);
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        UserEntity userEntity = new UserEntity();
+        userEntity.setFirstName(firstName);
+        userEntity.setLastName(lastName);
+        userEntity.setEmail(email);
+        userEntity.setUsername(username);
+        userEntity.setPassword(passwordEncoder.encode(password));
+        userEntity.setRole(role2);
+        userEntity.setLocation(location2);
+        return userRepository.save(userEntity);
     }
 }
 
