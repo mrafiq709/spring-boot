@@ -1,4 +1,7 @@
 package com.rafiq.rest.webservices.restfulwebservices.services;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rafiq.rest.webservices.restfulwebservices.dto.UserDTO;
 import com.rafiq.rest.webservices.restfulwebservices.model.Location;
 import com.rafiq.rest.webservices.restfulwebservices.model.Role;
@@ -7,48 +10,47 @@ import com.rafiq.rest.webservices.restfulwebservices.repository.RoleRepository;
 import com.rafiq.rest.webservices.restfulwebservices.repository.UserRepository;
 import com.rafiq.rest.webservices.restfulwebservices.dto.UserLocationDTO;
 import com.rafiq.rest.webservices.restfulwebservices.model.UserEntity;
-
 import java.util.List;
 import java.util.stream.Collectors;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @Service
 public class UserService implements UserDetailsService {
-
     @Autowired
     private UserRepository userRepository;
     @Autowired
     private LocationRepository locationRepository;
     @Autowired
     private RoleRepository roleRepository;
+    private final ObjectMapper objectMapper;
+    private final KafkaTemplate<String, String> kafkaTemplate;
+
+    public UserService(ObjectMapper objectMapper, KafkaTemplate<String, String> kafkaTemplate) {
+        this.objectMapper = objectMapper;
+        this.kafkaTemplate = kafkaTemplate;
+    }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         UserEntity userEntity = userRepository.findByUsername(username);
         if (userEntity == null) {
             throw new UsernameNotFoundException("User not found: " + username);
-        }
-
-        // Assuming roles are loaded as a list
-        return User.builder()
-                .username(userEntity.getUsername())
-                .password(userEntity.getPassword())
+        } // Assuming roles are loaded as a list
+        return User.builder().username(userEntity.getUsername()).password(userEntity.getPassword())
                 .roles(userEntity.getRole().getRoleName()) // Add role from database
                 .build();
     }
 
     public List<UserLocationDTO> getAllUsersLocation() {
-        return userRepository.findAll()
-                .stream()
-                .map(this::convertEntityToDTO)
-                .collect(Collectors.toList());
+        return userRepository.findAll().stream().map(this::convertEntityToDTO).collect(Collectors.toList());
     }
 
     private UserLocationDTO convertEntityToDTO(UserEntity user) {
@@ -62,8 +64,7 @@ public class UserService implements UserDetailsService {
     }
 
     public List<UserDTO> getAllUsers() {
-        return userRepository.findAll().stream().map(this::convertToDTO)
-                .collect(Collectors.toList());
+        return userRepository.findAll().stream().map(this::convertToDTO).collect(Collectors.toList());
     }
 
     private UserDTO convertToDTO(UserEntity user) {
@@ -78,7 +79,8 @@ public class UserService implements UserDetailsService {
         return userDTO;
     }
 
-    public UserEntity createUser(String firstName, String lastName, String email, String username, String password, String role, String location) {
+    public UserEntity createUser(String firstName, String lastName, String email, String username, String password,
+                                 String role, String location) {
         Location location2 = new Location();
         location2.setPlace(location);
         location2.setDescription("Awesome");
@@ -97,6 +99,11 @@ public class UserService implements UserDetailsService {
         userEntity.setLocation(location2);
         return userRepository.save(userEntity);
     }
+
+    public String notifyUser(@RequestBody UserLocationDTO userLocation) throws JsonProcessingException {
+        final String topicName = "user-location";
+        String userL = objectMapper.writeValueAsString(userLocation);
+        kafkaTemplate.send(topicName, userLocation.getPlace(), userL);
+        return "User location updated: " + userL;
+    }
 }
-
-
