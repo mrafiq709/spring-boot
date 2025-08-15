@@ -45,7 +45,9 @@ public class SpringSecurityConfiguration {
 							SessionCreationPolicy.STATELESS)
 		);
 		http.authorizeHttpRequests(
-				auth -> auth.anyRequest().authenticated()
+				auth -> auth
+				.requestMatchers("/management/**").permitAll()
+				.anyRequest().authenticated()
 		);
 //		2) If a request is not authenticated, use http basic
 		//To search withDefaults() method => command + shift + T
