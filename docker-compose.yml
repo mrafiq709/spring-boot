@@ -4,6 +4,6 @@ services:
     ports:
       - 5432:5432
     environment:
-      POSTGRES_DB: ${DB_SCHEMA:ss2c}
-      POSTGRES_USER: ${DB_USER:user}
-      POSTGRES_PASSWORD: ${DB_PASS:pass}
+      POSTGRES_DB: ${DB_SCHEMA:-ss2c}
+      POSTGRES_USER: ${DB_USER:-user}
+      POSTGRES_PASSWORD: ${DB_PASS:-pass}
