@@ -9,12 +9,12 @@ services:
       - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
       - ./prometheus/alerting-rules.yml:/etc/prometheus/alerting-rules.yml
 
-  mysql-exporter:
-    image: prom/mysqld-exporter
+  postgres-exporter:
+    image: bitnami/postgres-exporter
     ports:
-      - 9104:9104
+      - 9187:9187
     environment:
-      DATA_SOURCE_NAME: "exporter:password@(mysql:3306)/"
+      DATA_SOURCE_NAME: "postgresql://${DB_USER:-user}:${DB_PASS:-pass}@host.docker.internal:5432/${DB_SCHEMA:-ss2c}?sslmode=disable"
 
   grafana:
     image: grafana/grafana:9.5.2
