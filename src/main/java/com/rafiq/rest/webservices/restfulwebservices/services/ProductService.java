@@ -23,5 +23,9 @@ public class ProductService {
     public List<Product> searchByName(String name) {
         return repository.findByName(name);
     }
+    
+    public List<Product> fullTextSearch(String text) {
+        return repository.searchByText(text);
+    }
 }
 

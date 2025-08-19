@@ -26,5 +26,10 @@ public class ProductController {
     public List<Product> search(@RequestParam String name) {
         return service.searchByName(name);
     }
+    
+    @GetMapping("/full-search")
+    public List<Product> fullSearch(@RequestParam String q) {
+        return service.fullTextSearch(q);
+    }
 }
 
