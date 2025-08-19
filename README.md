@@ -51,3 +51,36 @@ POST /products
 ```bash
 GET /products/search?name=Laptop
 ```
+
+### For full text search
+
+Elasticsearch will:
+
+-   Tokenize “laptop gaming” into keywords
+-   Search across both name and description
+-   Boost matches in name
+-   Return sorted by relevance score
+
+```bash
+POST /products
+```
+
+```json
+{
+	"name": "Gaming Laptop",
+	"description": "High performance laptop for gaming",
+	"price": 1200.0
+}
+```
+
+```json
+{
+	"name": "Office Laptop",
+	"description": "Lightweight laptop for business use",
+	"price": 800.0
+}
+```
+
+```bash
+GET /products/full-search?q=laptop gaming
+```
